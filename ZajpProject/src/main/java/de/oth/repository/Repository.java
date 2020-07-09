@@ -12,27 +12,27 @@ import de.oth.checkout.Checkout;
 import de.oth.commit.Commit;
 import de.oth.staging.Tree;
 
-
+/**
+ * 
+ * @author Dimitri
+ *
+ */
 public class Repository implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6991793348956107124L;
-	
-	private final String jidPath="./.jit";
+
+	private final String jidPath = "./.jit";
 	private final String objectPath = "./.jit/objects";
 	private final String stagingPath = "./.jit/staging";
-	
-	private final String SerielPath= "./.jit/staging/staging.ser";
-	
 
-	// methodes
+	private final String SerielPath = "./.jit/staging/staging.ser";
 
 	public void init() {
 
 		if (!allreadyinitialized()) {
-			
 
 			File jid = new File(jidPath);
 			File objects = new File(objectPath);
@@ -59,9 +59,12 @@ public class Repository implements Serializable {
 
 	}
 
+	/**
+	 * 
+	 * @param dataPath data Path string that the user would like to add to the
+	 *                 staging area
+	 */
 	public void add(String dataPath) {
-		
-		
 
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
@@ -76,12 +79,12 @@ public class Repository implements Serializable {
 		File f = new File(dataPath);
 		File staging = new File(SerielPath);
 
-		Tree t=new Tree();
-		
-		if(staging.exists()) {
-		
+		Tree t = new Tree();
+
+		if (staging.exists()) {
+
 			try {
-				t=loadTree();
+				t = loadTree();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -90,45 +93,40 @@ public class Repository implements Serializable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		t.add(f);
-		
+
 		try {
 			saveTree(t);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
+
 		System.out.println("current staging area:");
-		t.printstages();
-		
-		
+		t.setupPrintStages();
+
 	}
 
-	
+	/**
+	 * 
+	 * @param dataPath data Path string that the user would like to remove from the
+	 *                 staging area
+	 */
 	public void remove(String dataPath) {
-		
-		
-		
-		
+
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
 			return;
 		}
-		
-		File f= new File(dataPath);
-		
-		
+
+		File f = new File(dataPath);
+
 		Tree t = new Tree();
 
 		try {
-			t=loadTree();
+			t = loadTree();
 
-			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,46 +134,43 @@ public class Repository implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		t.remove(f);
 		try {
 			saveTree(t);
-			
-			t.printstages();
-			
-			
+
+			t.setupPrintStages();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+
 	}
-	
-		
+
+	/**
+	 * 
+	 * @param commit massage that the user made
+	 */
 	public void commit(String commit) {
-		
+
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
 			return;
 		}
-		
-		
-		if(!(new File(SerielPath).exists())) {
-			
+
+		if (!(new File(SerielPath).exists())) {
+
 			System.out.println("Nothing in the Staging Area");
-			
+
 		}
-		
-		
+
 		try {
-			Tree t=loadTree();
-			
-			Commit c=new Commit(commit, new File(objectPath), t);
+			Tree t = loadTree();
+
+			Commit c = new Commit(commit, new File(objectPath), t);
 			c.makeCommit(t.getRootNode());
-			
-			
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -183,20 +178,19 @@ public class Repository implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
+
 	}
-	
-	
-	
+
+	/**
+	 * 
+	 * @return true if initialized or false if the user didn't
+	 */
 	private boolean allreadyinitialized() {
 
 		if (new File(jidPath).exists() && new File(objectPath).exists() && new File(stagingPath).exists()) {
+
 			return true;
+
 		} else {
 
 			return false;
@@ -204,9 +198,12 @@ public class Repository implements Serializable {
 
 	}
 
+	/**
+	 * 
+	 * @param dataPath String of data path
+	 * @return return true if the user given a data path that exist
+	 */
 	private boolean validDatapath(String dataPath) {
-
-		
 
 		File datafile = new File(dataPath);
 
@@ -218,9 +215,13 @@ public class Repository implements Serializable {
 
 	}
 
-	
-	
-	
+	/**
+	 * 
+	 * save the Tree Object with serialization in .jit/staging/staging.ser
+	 * 
+	 * @param t the Tree that sould be saved/
+	 * @throws IOException
+	 */
 	private void saveTree(Tree t) throws IOException {
 
 		FileOutputStream fos = new FileOutputStream(SerielPath);
@@ -230,10 +231,15 @@ public class Repository implements Serializable {
 		oos.close();
 
 	}
-	
 
-	
-	
+	/**
+	 * 
+	 * load/deserialize Tree from .jit/staging/staging.ser
+	 * 
+	 * @return the loaded Tree
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private Tree loadTree() throws IOException, ClassNotFoundException {
 
 		FileInputStream fis = new FileInputStream(SerielPath);
@@ -246,15 +252,39 @@ public class Repository implements Serializable {
 	}
 
 	public void checkout(String hash) {
-		
-		Checkout c=new Checkout();
+
+		Checkout c = new Checkout();
 		try {
 			c.setupCheckout(hash);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
+	/**
+	 * print current Staging area on the console
+	 */
+	public void printCurrentStaging() {
+
+		if (!new File(SerielPath).exists()) {
+
+			System.out.println("Staging area does't exist yet");
+			return;
+		}
+
+		Tree t = new Tree();
+		try {
+			t = loadTree();
+
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		t.setupPrintStages();
+
+	}
+
 }

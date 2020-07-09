@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 
+ * @author Dimitri
+ *
+ */
 public class Tree implements Serializable {
 
 	/**
@@ -22,14 +27,26 @@ public class Tree implements Serializable {
 
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * @return the root Node of the Tree
+	 */
 	public Node getRootNode() {
 		return rootNode;
 	}
 
-	public void add(File f) {
+	
+	/**
+	 * 
+	 * @param file that that the user would like to add
+	 */
+	public void add(File file) {
 
 		Node parentNode = rootNode;
-		List<File> filelist = FileStructureToList(f);
+		List<File> filelist = FileStructureToList(file);
 
 		for (int i = 0; i < filelist.size(); i++) {
 
@@ -46,16 +63,29 @@ public class Tree implements Serializable {
 
 			}
 
-			if (inlist == false) {
+			if (!inlist) {
 				newChildNode.setParentNode(parentNode);
 				parentNode.addChild(newChildNode);
+				Collections.sort(parentNode.getChildNodes());
 				parentNode = newChildNode;
+				//parentNode.getChildNodes().sort();
+				
+				
 			}
 
 		}
 
 	}
 
+	
+	
+	/**
+	 * 
+	 * create from a given file a list of files for every subdirectory
+	 * 
+	 * @param f the whole link to the file
+	 * @return the list of all files with there subdirectories
+	 */
 	private List<File> FileStructureToList(File f) {
 
 		List<File> filelist = new ArrayList<File>();
@@ -76,11 +106,15 @@ public class Tree implements Serializable {
 
 	
 	
-	
+	/**
+	 * 
+	 * remove a file from the Tree and delete all empty folders
+	 * 
+	 * @param f the file that sould be removed
+	 */
 	public void remove(File f) {
 		
-		
-	//Node root = rootNode;
+			
 	List<File> filelist = FileStructureToList(f);
 	Node currenNode=rootNode;
 	
@@ -97,7 +131,7 @@ public class Tree implements Serializable {
 				
 				currenNode.getChildNodes().remove(j);
 				
-				
+						
 				// clean empty dirs
 				
 				while(!currenNode.equals(rootNode))
@@ -134,15 +168,24 @@ public class Tree implements Serializable {
 	
 	
 	
-	
-	public void printstages() {
+	/**
+	 * Setup the Tree to print the current staging area on console
+	 */
+	public void setupPrintStages() {
 
-		System.out.println("+--  " + rootNode.getData().getName()+"   Hash Code : "+rootNode.SHA1HashValue());
-		printIt(rootNode.getChildNodes(), "");
+		System.out.println("+--  " + rootNode.getData().getName()/*+"   Hash Code : " +rootNode.SHA1HashValue()*/);
+		printStages(rootNode.getChildNodes(), "");
 	}
 
 	
-	private void printIt(List<Node> childs, String s) {
+	/**
+	 * 
+	 * print recursively the Staging Tree
+	 * 
+	 * @param childs all sub files and directories in the current Node that shoul print aswell
+	 * @param s String to the whitespaces to look better 
+	 */
+	private void printStages(List<Node> childs, String s) {
 
 		if (childs == null || childs.size() == 0) {
 			return;
@@ -152,8 +195,8 @@ public class Tree implements Serializable {
 
 		for (int i = 0; i < childs.size(); i++) {
 
-			System.out.println(s + "+--  " + childs.get(i).getData().getName()+"   Hash Code : "+childs.get(i).SHA1HashValue());
-			printIt(childs.get(i).getChildNodes(), s);
+			System.out.println(s + "+--  " + childs.get(i).getData().getName()/*+"   Hash Code : "+childs.get(i).SHA1HashValue()*/);
+			printStages(childs.get(i).getChildNodes(), s);
 		}
 
 	}

@@ -1,10 +1,13 @@
 package de.oth.commit;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import de.oth.hashing.Hashable;
 import de.oth.staging.Node;
@@ -33,8 +36,10 @@ public class Commit extends Hashable {
 		this.treeToCommit = treeToCommit;
 	}
 
+
+
 	public void makeCommit(Node n) {
-	
+
 		Node currentNode = n;
 
 		String CurrentName = currentNode.SHA1HashValue();
@@ -70,21 +75,11 @@ public class Commit extends Hashable {
 			} else
 
 			{
+				Path source = Paths.get(currentNode.getData().getPath());
 
-				FileInputStream fis = new FileInputStream(currentNode.getData().getPath());
-				byte[] buffer = new byte[10];
-				StringBuilder sb = new StringBuilder();
-				while (fis.read(buffer) != -1) {
-					sb.append(new String(buffer));
-					buffer = new byte[10];
-				}
-				fis.close();
+				FileOutputStream out = new FileOutputStream(objectDir.getPath() + "/" + CurrentName);
+				Files.copy(source, out);
 
-				String content = sb.toString();
-
-				writer.println(content);
-				
-			
 			}
 
 			writer.close();
