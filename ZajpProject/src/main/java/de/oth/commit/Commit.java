@@ -37,12 +37,13 @@ public class Commit extends Hashable {
 	}
 
 
-
 	public void makeCommit(Node n) {
 
 		Node currentNode = n;
 
 		String CurrentName = currentNode.SHA1HashValue();
+				
+		
 
 		try {
 			PrintWriter writer = new PrintWriter(objectDir.getPath() + "/" + CurrentName);

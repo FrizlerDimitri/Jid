@@ -8,17 +8,28 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public abstract class Hashable implements Serializable {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6167685795334824479L;
 
+	
+	/**
+	 * 
+	 * @return SHA-1 Hash String of object that used this method
+	 */
 	public String HashMe() {
 
 		return dataToHash(this);
 	}
 
+	
+	
+	/**
+	 * 
+	 * @param o Object that should be Hashed
+	 * @return SHA-1 Hash String of the given Object 
+	 */
 	public String dataToHash(Object o) {
 
 		final String algorithm = "SHA-1";
@@ -29,6 +40,8 @@ public abstract class Hashable implements Serializable {
 			try {
 				byte[] bytedata = dataToBytes(o);
 				byte[] data = md.digest(bytedata);
+				
+				
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < data.length; i++) {
 
@@ -36,8 +49,10 @@ public abstract class Hashable implements Serializable {
 
 				}
 
+				
 				String HashString = sb.toString();
-				// System.out.println(HashString);
+				
+				
 				return HashString;
 
 			} catch (IOException e) {
@@ -53,6 +68,13 @@ public abstract class Hashable implements Serializable {
 		return null;
 	}
 
+	
+	/**
+	 * 
+	 * @param data that should convert in a byte array
+	 * @return the byte array of the given data
+ 	 * @throws IOException
+	 */
 	private byte[] dataToBytes(Object data) throws IOException {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

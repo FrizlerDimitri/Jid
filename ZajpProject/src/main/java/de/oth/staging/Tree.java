@@ -27,9 +27,6 @@ public class Tree implements Serializable {
 
 	}
 
-	
-	
-	
 	/**
 	 * 
 	 * @return the root Node of the Tree
@@ -38,7 +35,6 @@ public class Tree implements Serializable {
 		return rootNode;
 	}
 
-	
 	/**
 	 * 
 	 * @param file that that the user would like to add
@@ -55,7 +51,7 @@ public class Tree implements Serializable {
 			boolean inlist = false;
 			for (int j = 0; j < parentNode.getChildNodes().size(); j++) {
 				if (parentNode.getChildNodes().get(j).equals(newChildNode)) {
-					
+
 					newChildNode.setParentNode(parentNode.getChildNodes().get(j));
 					parentNode = parentNode.getChildNodes().get(j);
 					inlist = true;
@@ -68,17 +64,14 @@ public class Tree implements Serializable {
 				parentNode.addChild(newChildNode);
 				Collections.sort(parentNode.getChildNodes());
 				parentNode = newChildNode;
-				//parentNode.getChildNodes().sort();
-				
-				
+				// parentNode.getChildNodes().sort();
+
 			}
 
 		}
 
 	}
 
-	
-	
 	/**
 	 * 
 	 * create from a given file a list of files for every subdirectory
@@ -102,10 +95,6 @@ public class Tree implements Serializable {
 
 	}
 
-	
-
-	
-	
 	/**
 	 * 
 	 * remove a file from the Tree and delete all empty folders
@@ -113,77 +102,67 @@ public class Tree implements Serializable {
 	 * @param f the file that sould be removed
 	 */
 	public void remove(File f) {
-		
-			
-	List<File> filelist = FileStructureToList(f);
-	Node currenNode=rootNode;
-	
-	for(int i=0; i<filelist.size(); i++)
-	{
-		
-		for(int j=0; j<currenNode.getChildNodes().size(); j++)
-		{
-			
-			if(currenNode.getChildNodes().get(j).getData().equals(filelist.get(i)) && i != (filelist.size()-1))
-			{
-				currenNode=currenNode.getChildNodes().get(j);
-			} else if(currenNode.getChildNodes().get(j).getData().equals(filelist.get(i)) && i == (filelist.size()-1)) {
-				
-				currenNode.getChildNodes().remove(j);
-				
-						
-				// clean empty dirs
-				
-				while(!currenNode.equals(rootNode))
-				{
-					if(currenNode.getChildNodes() == null || currenNode.getChildNodes().size()==0 )
-					{
-						
-						Node parentNode=currenNode.getParentNode();
-						
-						
-						parentNode.getChildNodes().remove(currenNode);
-					
-						currenNode=parentNode;
-					} else {
-						
-					  currenNode=currenNode.getParentNode();	
-						
-					}
-				}
-				
-				
-				
-				
-				
-			}
-			
-		}
-		
-	}
-	
 
-		
+		List<File> filelist = FileStructureToList(f);
+		Node currenNode = rootNode;
+
+		boolean inStagingArea = false;
+
+		for (int i = 0; i < filelist.size(); i++) {
+
+			for (int j = 0; j < currenNode.getChildNodes().size(); j++) {
+
+				if (currenNode.getChildNodes().get(j).getData().equals(filelist.get(i)) && i != (filelist.size() - 1)) {
+					currenNode = currenNode.getChildNodes().get(j);
+				} else if (currenNode.getChildNodes().get(j).getData().equals(filelist.get(i))
+						&& i == (filelist.size() - 1)) {
+
+					currenNode.getChildNodes().remove(j);
+
+					inStagingArea = true;
+					// clean empty dirs
+
+					while (!currenNode.equals(rootNode)) {
+						if (currenNode.getChildNodes() == null || currenNode.getChildNodes().size() == 0) {
+
+							Node parentNode = currenNode.getParentNode();
+
+							parentNode.getChildNodes().remove(currenNode);
+
+							currenNode = parentNode;
+						} else {
+
+							currenNode = currenNode.getParentNode();
+
+						}
+					}
+
+				}
+
+			}
+
+		}
+
+		if (!inStagingArea) {
+			System.out.println("File not in staging area");
+		}
+
 	}
-	
-	
-	
+
 	/**
 	 * Setup the Tree to print the current staging area on console
 	 */
 	public void setupPrintStages() {
 
-		System.out.println("+--  " + rootNode.getData().getName()/*+"   Hash Code : " +rootNode.SHA1HashValue()*/);
+		System.out.println("+--  " + rootNode.getData().getName() /*+"   Hash Code : " +rootNode.SHA1HashValue()*/ );
 		printStages(rootNode.getChildNodes(), "");
 	}
 
-	
 	/**
 	 * 
 	 * print recursively the Staging Tree
-	 * 
-	 * @param childs all sub files and directories in the current Node that shoul print aswell
-	 * @param s String to the whitespaces to look better 
+	 * @param childs all sub files and directories in the current Node that should print aswell
+	 * @param s  String for the whitespaces
 	 */
 	private void printStages(List<Node> childs, String s) {
 
@@ -195,7 +174,8 @@ public class Tree implements Serializable {
 
 		for (int i = 0; i < childs.size(); i++) {
 
-			System.out.println(s + "+--  " + childs.get(i).getData().getName()/*+"   Hash Code : "+childs.get(i).SHA1HashValue()*/);
+			System.out.println(s + "+--  "
+					+ childs.get(i).getData().getName() /*+"   Hash Code : "+childs.get(i).SHA1HashValue()*/ );
 			printStages(childs.get(i).getChildNodes(), s);
 		}
 

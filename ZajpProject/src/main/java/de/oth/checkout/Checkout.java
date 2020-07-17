@@ -123,7 +123,11 @@ public class Checkout {
 			} else {
 
 				if (flist[i].isDirectory()) {
+					
+				
 					FileUtils.deleteDirectory(flist[i]);
+				
+					
 				} else {
 
 					flist[i].delete();

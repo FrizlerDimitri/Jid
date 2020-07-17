@@ -109,7 +109,6 @@ public class Node extends Hashable implements Serializable, Comparable<Node>{
 		}
 		
 		
-		
 		if(thisNode.childNodes.size()==2)
 		{
 			

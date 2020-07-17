@@ -55,8 +55,11 @@ public class Repository implements Serializable {
 			} else {
 				System.out.println(stagingPath + " Directory existed already");
 			}
+			
+			
 		}
 
+		
 	}
 
 	/**
@@ -64,16 +67,16 @@ public class Repository implements Serializable {
 	 * @param dataPath data Path string that the user would like to add to the
 	 *                 staging area
 	 */
-	public void add(String dataPath) {
+	public boolean add(String dataPath) {
 
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
-			return;
+			return false;
 		}
 
 		if (!validDatapath(dataPath)) {
 			System.out.println("Not a valid datapath");
-			return;
+			return false;
 		}
 
 		File f = new File(dataPath);
@@ -86,11 +89,12 @@ public class Repository implements Serializable {
 			try {
 				t = loadTree();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				//e.printStackTrace();
+				return false;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				return false;
 			}
 		}
 
@@ -99,25 +103,30 @@ public class Repository implements Serializable {
 		try {
 			saveTree(t);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			//e.printStackTrace();
+			return false;
 		}
 
 		System.out.println("current staging area:");
 		t.setupPrintStages();
 
+		return true;
 	}
 
+	
+	
 	/**
 	 * 
-	 * @param dataPath data Path string that the user would like to remove from the
-	 *                 staging area
+	 * 
+	 * @param dataPath
+	 * @return true if method worked correctly
 	 */
-	public void remove(String dataPath) {
+	public boolean remove(String dataPath) {
 
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
-			return;
+			return false;
 		}
 
 		File f = new File(dataPath);
@@ -128,11 +137,14 @@ public class Repository implements Serializable {
 			t = loadTree();
 
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			//e.printStackTrace();
+			return false;
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	
+			//e.printStackTrace();
+			return false;
 		}
 
 		t.remove(f);
@@ -142,21 +154,24 @@ public class Repository implements Serializable {
 			t.setupPrintStages();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			return false;
 		}
 
+		return true;
 	}
 
+	
 	/**
 	 * 
 	 * @param commit massage that the user made
+	 * @return true if function worked properly
 	 */
-	public void commit(String commit) {
+	public boolean commit(String commit) {
 
 		if (!allreadyinitialized()) {
 			System.out.println("Not instinitialized");
-			return;
+			return false;
 		}
 
 		if (!(new File(SerielPath).exists())) {
@@ -165,6 +180,7 @@ public class Repository implements Serializable {
 
 		}
 
+		
 		try {
 			Tree t = loadTree();
 
@@ -172,12 +188,15 @@ public class Repository implements Serializable {
 			c.makeCommit(t.getRootNode());
 
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			//e.printStackTrace();
+
+			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			return false;
 		}
+		return true;
 
 	}
 
@@ -251,15 +270,25 @@ public class Repository implements Serializable {
 
 	}
 
-	public void checkout(String hash) {
+	
+	
+	
+	public boolean checkout(String hash) {
 
 		Checkout c = new Checkout();
 		try {
 			c.setupCheckout(hash);
+			File staging = new File(SerielPath);
+			staging.delete();
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			//e.printStackTrace();
+			return false;
+			
 		}
+		
+		return true;
 
 	}
 
@@ -276,15 +305,15 @@ public class Repository implements Serializable {
 
 		Tree t = new Tree();
 		try {
+			
 			t = loadTree();
 
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			//e.printStackTrace();
 		}
 
 		t.setupPrintStages();
-
 	}
-
+	
 }
